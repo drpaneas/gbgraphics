@@ -1,34 +1,61 @@
 # GBGraphics
 
-I always wanted to re-create my favorite retro-games. To do that, I need their graphics, but I am no designer nor I am interested in downloaded illegal material (such as rom and sprites). What if I could extract the graphics from my own personal Gameboy cartridge?
+I always wanted to re-create my favorite retro-games using modern Game-Engines, such as Godot or Unity.
+To do that, I need the game's graphics, but I am no designer, nor I am interested in (illegally) downloading copyrighted material (such as ROMs and its tiles/sprites).
+So I decided to extract the graphics from my own ROMs, and use them.
+This tool, does exactly that, it extracts the graphics from a ROM, and saves them as PNGs.
+But to do that, it needs to know _where_ the graphics are (memory address).
+Since there are many ROMs, and many versions of the same game, I decided to make this tool which supports multiple ROMs, and multiple versions of the same game.
+How?
+By using a reference screenshot image.
+You have to take a screenshot of a specific scene in the game, the one you are interested in ripping its graphic assets and use that as a reference.
+The tool will analyze the image, and extract the graphics from the actual ROM.
+In this way, I can (programmatically) extract the original 8x8 tiles used for a specific scene in any Gameboy game.
+Having these 8x8 tiles, I can assemble them using [Aseprite](https://www.aseprite.org/) into a canonical game object (in case it consists of multiple tiles), and then export it as a PNG file.
 
-1. Takes a binary file as an input (i.e. gameboy rom) and parses a given screenshot (taken from an emulator).
-2. This tool will create individual 8x8 images, decode their DMG color palete and convert them back to 2BPP format.
-3. Then, it will search byte by byte through the binary file (i.e. gameboy rom) to find any of these 2BPP tiles.
-4. If it finds one, it will convert this specific block of 2BPP code back to a PNG image and save it locally.
-5. It will continue until there are no more 8x8 images left.
+## In a nutshell
 
-In this way, I can (programmtically) extract the original 8x8 tiles used for a specific scene of my Gameboy game.
-So, later I can assemble these using a TileMap software or something like [Aseprite](https://www.aseprite.org/)
+1. Takes two inputs: a ROM file, and a reference screenshot image from the game.
+2. Chops the reference screenshot into individual 8x8 images, decodes the DMG color palette and converts them back to 2BPP format.
+3. Searches into the ROM file to find any of these 8x8 2BPP-format images.
+4. Saves any of the findings as PNG formatted images.
 
-## How it works
+### Input 1: Get a ROM file
 
-### Get a ROM file
+First step is to dump a Rom file (e.g. `game.gb`) taken from your GameBoy physical cartridge you already own.
+You will need a cartridge reader, such as [Sanni's Cardreader](https://github.com/sanni/cartreader), which dumps pretty much every well-know retro-console.
+There are other card-readers, dedicated to dumping Gameboy cards only, such as [GBxCart RW v1.4 Pro](https://retrogamerepairshop.com/products/gbxcart-rw-gameboy-gbc-gba-cart-reader-writer-flasher).
 
-First step is to dump a Rom file (e.g. `game.gb`) from your GameBoy physical cartridge. To do that you a need a cartridge reader, such as [Sanni's Open Source cardreader](https://github.com/sanni/cartreader). There are other devices, dedicated to dumping Gameboy cards such as [GBxCart RW v1.4 Pro](https://retrogamerepairshop.com/products/gbxcart-rw-gameboy-gbc-gba-cart-reader-writer-flasher).
+### Input 2: Take a screenshot
 
-### Take a screenshot
-
-Launch your favorite Gameboy emulator and start playing the game until you find the scene your are interested in ripping its graphics.
-The requirements for a proper screenshot:
+Launch your favorite Gameboy emulator and start playing the game until you find the scene you are interested in ripping its graphics.
+The requirements for a proper screenshot are the following:
 
 1. image type: ARGB
 2. resolution: 160×144 pixels (it's the native GameBoy res)
+3. color palette: DMG (GameBoy) palette
 
-NOTE: It's very important to take a screenshot with these specifications, otherwise this tool won't work! Read [Gameboy 2BPP Graphics Format](https://www.huderlem.com/demos/gameboy2bpp.html) article by [Huderlem](https://www.huderlem.com/) for further details.
+The gameboy palette is a 4-color palette, which is used to render the 2BPP images, is the following:
+
+<style>
+    a { color: #E0F8D0 }
+    b { color: #88C070 }
+    c { color: #346856 }
+    d { color: #081820 }
+</style>
+
+- <a>{0xE0, 0xF8, 0xD0}, // lightest (#E0F8D0)</a>
+- <b>{0x88, 0xC0, 0x70}, // light (#88C070)</b>
+- <c>{0x34, 0x68, 0x56}, // dark (#346856)</c>
+- <d>{0x08, 0x18, 0x20}, // darkest (#081820)</d>
+
+NOTE: It's very important to take a screenshot with these specifications, otherwise this tool won't work!
+NOTE: Read [Gameboy 2BPP Graphics Format](https://www.huderlem.com/demos/gameboy2bpp.html) article by [Huderlem](https://www.huderlem.com/) for further details.
+
+#### Optional step (recommended): using GoBoy emulator
 
 In my case, I am using my modified version of [GoBoy](https://github.com/drpaneas/goboy) emulator.
-Here's the instruction for you, to follow my example:
+Here's the instructions for you, to follow my example:
 
 ```bash
 # Clone my fork
@@ -37,12 +64,12 @@ git clone https://github.com/drpaneas/goboy; cd goboy
 # Build it (you need to have Go installed)
 go build -o goboy cmd/goboy/main.go
 
-# Run it against your Rom (e.g. pokemon.gb)
+# Run it against your ROM using the DMG color palette
 ./goboy -dmg pokemon.gb
 ```
 
-The game will start playing in a tiny bordeless window!
-Press `t` to take a screenshot. It will be saved locally with `screenshot.png` filename.
+The game will start playing in a tiny borderless window!
+Press key `t` to take a screenshot. It will be saved locally with `screenshot.png` filename.
 
 ## Usage
 
@@ -76,12 +103,20 @@ Output:
 '00 00 00 00 78 38 60 60 63 63 7B 3B 00 00 00 00' (Found at location 0x121E8) converted to 'out_98.png'
 ```
 
-Screenshot (`screen.png`) used in this example, taken from my goboy emulator fork:
+Screenshot (`screen.png`) used in this example, taken from my modified GoBoy emulator:
 
 ![screen.png](screen.png)
 
-And the unique tiles extracted from this one:
+The unique tiles extracted from this one:
 
 ![tiles.png](tiles.png)
 
-Cool, eh?
+## How to build it
+
+```bash
+# Clone the repo
+git clone https://github.com/drpaneas/gbgraphics; cd gbgraphics
+
+# Build it (with versioning info if you have Go 1.18)
+go build -buildvcs
+```
