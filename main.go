@@ -360,9 +360,17 @@ func pngTo2BPP(imData image.Image) []byte {
 			var lowBit, highBit uint8
 
 			pixelColor := imData.At(x, y)
-			r := pixelColor.(color.RGBA).R
-			g := pixelColor.(color.RGBA).G
-			b := pixelColor.(color.RGBA).B
+
+			// type assertion must be checked
+			col, ok := pixelColor.(color.RGBA)
+			if !ok {
+				fmt.Println("Not RGBA")
+				os.Exit(1)
+			}
+
+			r := col.R
+			g := col.G
+			b := col.B
 
 			if r == g && g == b {
 				switch r {
