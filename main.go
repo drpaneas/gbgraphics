@@ -99,26 +99,6 @@ func main() {
 			os.Exit(1)
 		}
 
-		if bitDepth == 0 {
-			fmt.Println("No bit depth specified!")
-			os.Exit(1)
-		}
-
-		if bitDepth != 1 && bitDepth != 2 {
-			fmt.Println("Invalid bit depth specified!")
-			os.Exit(1)
-		}
-
-		if width == 0 {
-			fmt.Println("No width specified!")
-			os.Exit(1)
-		}
-
-		if width%8 != 0 {
-			fmt.Println("Invalid width specified!")
-			os.Exit(1)
-		}
-
 		if rangeStartOffset < 0 {
 			fmt.Println("Invalid start offset specified!")
 			os.Exit(1)
@@ -161,19 +141,15 @@ func main() {
 
 			for x := 0; x < 8; x++ {
 				for y := 0; y < 8; y++ {
-					if (i+y >= len(imageData) && bitDepth == 1) || ((i+2*y+1 >= len(imageData)) && bitDepth == 2) {
+					if i+2*y+1 >= len(imageData) {
 						break
 					}
 
-					if bitDepth == 2 {
-						highBit = int(imageData[i+2*y+1]>>(7-x)) & 0x01
-						lowBit = int(imageData[i+2*y]>>(7-x)) & 0x01
-						value := (highBit << 1) | lowBit
-						colorVal = int(255 * (float32(3-value) / 3))
-					} else {
-						value := (imageData[i+y] >> (7 - x)) & 0x01
-						colorVal = int(1-value) * 255
-					}
+					// Given that bit depth is 2:
+					highBit = int(imageData[i+2*y+1]>>(7-x)) & 0x01
+					lowBit = int(imageData[i+2*y]>>(7-x)) & 0x01
+					value := (highBit << 1) | lowBit
+					colorVal = int(255 * (float32(3-value) / 3))
 
 					var c color.Color = color.RGBA{R: uint8(colorVal), G: uint8(colorVal), B: uint8(colorVal), A: 255}
 
@@ -256,9 +232,9 @@ var Palettes = [][][]byte{
 
 // GetPaletteColour returns the colour based on the colour index and the currently
 // selected palette.
-func GetPaletteColour(index byte, palette byte) (r, g, b uint8) {
+func GetPaletteColour(index byte, palette byte) (uint8, uint8, uint8) {
 	col := Palettes[palette][index]
-	r, g, b = col[0], col[1], col[2]
+	r, g, b := col[0], col[1], col[2]
 
 	return r, g, b
 }
@@ -389,16 +365,16 @@ func pngTo2BPP(imData image.Image) []byte {
 				}
 			} else {
 				// Find the closest palette colour
-				if red, green, blue := GetPaletteColour(darkest, PaletteBGB); r == red && g == green && b == blue { // black, r = 3
+				if red, green, blue := GetPaletteColour(darkest, PaletteBGB); r == red && g == green && b == blue {
 					highBit = 1
 					lowBit = 1
-				} else if red, green, blue := GetPaletteColour(dark, PaletteBGB); r == red && g == green && b == blue { // dark gray, r = 2
+				} else if red, green, blue := GetPaletteColour(dark, PaletteBGB); r == red && g == green && b == blue {
 					highBit = 1
 					lowBit = 0
-				} else if red, green, blue := GetPaletteColour(light, PaletteBGB); r == red && g == green && b == blue { // light gray, r = 1
+				} else if red, green, blue := GetPaletteColour(light, PaletteBGB); r == red && g == green && b == blue {
 					highBit = 0
 					lowBit = 1
-				} else if red, green, blue := GetPaletteColour(lightest, PaletteBGB); r == red && g == green && b == blue { // white, r = 0
+				} else if red, green, blue := GetPaletteColour(lightest, PaletteBGB); r == red && g == green && b == blue {
 					highBit = 0
 					lowBit = 0
 				} else {
