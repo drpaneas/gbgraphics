@@ -41,11 +41,12 @@ func (args) Version() string {
 	return "git commit " + Commit
 }
 
-var rangeStartOffset, rangeLength int32
+var rangeStartOffset int32
 
 const (
-	width    = 8
-	bitDepth = 2
+	width       = 8
+	bitDepth    = 2
+	rangeLength = 16
 )
 
 func main() {
@@ -54,12 +55,18 @@ func main() {
 	arg.MustParse(&userInput)
 
 	outputFilename := userInput.Output
-	path := userInput.Rom
 	screenshot := userInput.Screenshot
 
-	romBytes, errReadFile := os.ReadFile(userInput.Rom)
+	path := userInput.Rom
+	if path == "" {
+		fmt.Println("No ROM specified!")
+		os.Exit(1)
+	}
+
+	romBytes, errReadFile := os.ReadFile(path)
 	if errReadFile != nil {
-		log.Fatal(errReadFile)
+		fmt.Println(errReadFile)
+		os.Exit(1)
 	}
 
 	locations := getTiles(screenshot, romBytes)
@@ -67,59 +74,18 @@ func main() {
 		withoutPng := strings.ReplaceAll(outputFilename, ".png", "")
 		newOutputFilename := fmt.Sprintf("%s_%d.png", withoutPng, i)
 
-		startOffsetString := v
-		// Remove the 0x prefix and keep only the actual number (as a string)
-		if !strings.Contains(startOffsetString, "0x") {
-			fmt.Println("Invalid start offset specified! Please specify a HEX value (e.g. 0x3f)")
-			os.Exit(1)
-		}
-		// Remove the 0x prefix (it's not needed anymore)
-		startOffsetString = strings.ReplaceAll(startOffsetString, "0x", "")
-		// and convert the strings (which represent a hex value) to a decimal int32
-		a, _ := strconv.ParseInt(startOffsetString, 16, 32)
-		rangeStartOffset = int32(a)
-		lengthString := "0x10"
-		// Remove the 0x prefix and keep only the actual number (as a string)
-		if !strings.Contains(lengthString, "0x") {
-			fmt.Println("Invalid length specified! Please specify a HEX value (e.g. 0x200/512)")
-			os.Exit(1)
-		}
-		// Remove the 0x prefix (it's not needed anymore)
-		lengthString = strings.ReplaceAll(lengthString, "0x", "")
-		// and convert the strings (which represent a hex value) to a decimal int32
-		a, _ = strconv.ParseInt(lengthString, 16, 32)
-		rangeLength = int32(a)
-
-		if path == "" {
-			fmt.Println("No ROM specified!")
-			os.Exit(1)
-		}
+		rangeStartOffset = convertHexToInt32(v)
 
 		if rangeStartOffset < 0 {
 			fmt.Println("Invalid start offset specified!")
 			os.Exit(1)
 		}
 
-		if rangeLength < 0 {
-			fmt.Println("Invalid length specified!")
-			os.Exit(1)
-		}
-
-		// Load GB ROM
-		imageData, errImageData := os.ReadFile(path)
-		if errImageData != nil {
-			fmt.Println(errImageData)
-			os.Exit(1)
-		}
-
-		// If the user specified a file range, we only want to use the specified range
-		// e.g. -r 0x640A0 0x10 (it's 16 bytes long)
-		imageData = imageData[rangeStartOffset : rangeStartOffset+rangeLength]
-		tileBits := 8 * 8 * bitDepth // 8x8 pixels, 2 bits per pixel, 16 bytes per tile
+		tile := romBytes[rangeStartOffset : rangeStartOffset+rangeLength]
 
 		// Calculate the height of the img in bytes
-		height := 8 * int(math.Ceil(float64(len(imageData))/float64(tileBits)))
-		hexValue := fmt.Sprintf("% X", imageData)
+		height := 8 * int(math.Ceil(float64(len(tile))/float64(8*8*bitDepth)))
+		hexValue := fmt.Sprintf("% X", tile)
 		img := image.NewRGBA(image.Rect(0, 0, width, height))
 
 		for x := 0; x < width; x++ {
@@ -130,35 +96,8 @@ func main() {
 
 		xPos, yPos := 0, 0
 
-		for i := 0; i < width*height; i += 8 * bitDepth {
-			highBit := 0
-			lowBit := 0
-			colorVal := 0
-
-			for x := 0; x < 8; x++ {
-				for y := 0; y < 8; y++ {
-					if i+2*y+1 >= len(imageData) {
-						break
-					}
-
-					// Given that bit depth is 2:
-					highBit = int(imageData[i+2*y+1]>>(7-x)) & 0x01
-					lowBit = int(imageData[i+2*y]>>(7-x)) & 0x01
-					value := (highBit << 1) | lowBit
-					colorVal = int(255 * (float32(3-value) / 3))
-
-					var c color.Color = color.RGBA{R: uint8(colorVal), G: uint8(colorVal), B: uint8(colorVal), A: 255}
-
-					img.Set(x+(xPos*8), y+(yPos*8), c)
-				}
-			}
-
-			xPos++
-			if xPos >= (width / 8) {
-				xPos = 0
-				yPos++
-			}
-		}
+		// Modify the img
+		convert2BPPToPNG(height, tile, img, xPos, yPos)
 
 		if err := saveToDisk(newOutputFilename, img); err != nil {
 			fmt.Println(err)
@@ -167,6 +106,53 @@ func main() {
 
 		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, newOutputFilename)
 	}
+}
+
+func convert2BPPToPNG(height int, tile []byte, img *image.RGBA, xPos int, yPos int) {
+	for i := 0; i < width*height; i += 8 * bitDepth {
+		highBit := 0
+		lowBit := 0
+		colorVal := 0
+
+		for x := 0; x < 8; x++ {
+			for y := 0; y < 8; y++ {
+				if i+2*y+1 >= len(tile) {
+					break
+				}
+
+				// Given that bit depth is 2:
+				highBit = int(tile[i+2*y+1]>>(7-x)) & 0x01
+				lowBit = int(tile[i+2*y]>>(7-x)) & 0x01
+				value := (highBit << 1) | lowBit
+				colorVal = int(255 * (float32(3-value) / 3))
+
+				var c color.Color = color.RGBA{R: uint8(colorVal), G: uint8(colorVal), B: uint8(colorVal), A: 255}
+
+				img.Set(x+(xPos*8), y+(yPos*8), c)
+			}
+		}
+
+		xPos++
+		if xPos >= (width / 8) {
+			xPos = 0
+			yPos++
+		}
+	}
+}
+
+func convertHexToInt32(v string) int32 {
+	startOffsetString := v
+	// Remove the 0x prefix and keep only the actual number (as a string)
+	if !strings.Contains(startOffsetString, "0x") {
+		fmt.Println("Invalid start offset specified! Please specify a HEX value (e.g. 0x3f)")
+		os.Exit(1)
+	}
+	// Remove the 0x prefix (it's not needed anymore)
+	startOffsetString = strings.ReplaceAll(startOffsetString, "0x", "")
+	// and convert the strings (which represent a hex value) to a decimal int32
+	a, _ := strconv.ParseInt(startOffsetString, 16, 32)
+
+	return int32(a)
 }
 
 func saveToDisk(outputFilename string, img image.Image) error {
@@ -198,7 +184,6 @@ const (
 	// colour palette  as it would have been on the GameBoy
 	// PaletteOriginal
 
-	// PaletteBGB used by default in the BGB emulator.
 	PaletteBGB = 2
 )
 
