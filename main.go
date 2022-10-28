@@ -56,8 +56,7 @@ func main() {
 	// are required to fully represent a single tile.
 	width := 8
 	bitDepth := 2
-	path := ""
-	path = args.Rom
+	path := args.Rom
 	screenshot := args.Screenshot
 
 	romBytes, err := os.ReadFile(args.Rom)
@@ -68,7 +67,7 @@ func main() {
 	locations := getTiles(screenshot, romBytes)
 	for i, v := range locations {
 		outputFilename = args.Output
-		outputFilename = strings.Replace(outputFilename, ".png", "", -1)
+		outputFilename = strings.ReplaceAll(outputFilename, ".png", "")
 		outputFilename = fmt.Sprintf("%s_%d.png", outputFilename, i)
 
 		startOffsetString := v
@@ -78,7 +77,7 @@ func main() {
 			os.Exit(1)
 		}
 		// Remove the 0x prefix (it's not needed anymore)
-		startOffsetString = strings.Replace(startOffsetString, "0x", "", -1)
+		startOffsetString = strings.ReplaceAll(startOffsetString, "0x", "")
 		// and convert the strings (which represent a hex value) to a decimal int32
 		a, _ := strconv.ParseInt(startOffsetString, 16, 32)
 		rangeStartOffset = int32(a)
@@ -89,7 +88,7 @@ func main() {
 			os.Exit(1)
 		}
 		// Remove the 0x prefix (it's not needed anymore)
-		lengthString = strings.Replace(lengthString, "0x", "", -1)
+		lengthString = strings.ReplaceAll(lengthString, "0x", "")
 		// and convert the strings (which represent a hex value) to a decimal int32
 		a, _ = strconv.ParseInt(lengthString, 16, 32)
 		rangeLength = int32(a)
@@ -132,7 +131,7 @@ func main() {
 			}
 		}
 
-		var xPos, yPos = 0, 0
+		xPos, yPos := 0, 0
 
 		for i := 0; i < width*height; i += 8 * bitDepth {
 			highBit := 0
