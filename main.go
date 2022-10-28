@@ -47,21 +47,19 @@ func main() {
 	var (
 		args           args
 		outputFilename string
+		path           string
+		screenshot     string
+		width          = 8
+		bitDepth       = 2
 	)
 
 	arg.MustParse(&args)
+	path = args.Rom
+	screenshot = args.Screenshot
 
-	// There are 64 total pixels in a single tile (8x8 pixels).
-	// Therefore, exactly 128 bits, or 16 bytes,
-	// are required to fully represent a single tile.
-	width := 8
-	bitDepth := 2
-	path := args.Rom
-	screenshot := args.Screenshot
-
-	romBytes, err := os.ReadFile(args.Rom)
-	if err != nil {
-		log.Fatal(err)
+	romBytes, errReadFile := os.ReadFile(args.Rom)
+	if errReadFile != nil {
+		log.Fatal(errReadFile)
 	}
 
 	locations := getTiles(screenshot, romBytes)
@@ -109,9 +107,9 @@ func main() {
 		}
 
 		// Load GB ROM
-		imageData, err := os.ReadFile(path)
-		if err != nil {
-			fmt.Println(err)
+		imageData, errImageData := os.ReadFile(path)
+		if errImageData != nil {
+			fmt.Println(errImageData)
 			os.Exit(1)
 		}
 
@@ -163,37 +161,46 @@ func main() {
 			}
 		}
 
-		f, err := os.Create(outputFilename)
-		if err != nil {
+		if err := saveToDisk(outputFilename, img); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
-		}
-
-		defer func(f *os.File) {
-			err := f.Close()
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-		}(f)
-
-		err = png.Encode(f, img)
-		if err != nil {
-			fmt.Println(err)
 		}
 
 		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, outputFilename)
 	}
 }
 
+func saveToDisk(outputFilename string, img image.Image) error {
+	f, err := os.Create(outputFilename)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+
+	defer func(f *os.File) {
+		if err := f.Close(); err != nil {
+			return
+		}
+	}(f)
+
+	err = png.Encode(f, img)
+	if err != nil {
+		return fmt.Errorf("failed to encode image: %w", err)
+	}
+
+	return nil
+}
+
 const (
+	// PaletteBGB is the default palette used by BGB
+
 	// PaletteGreyscale is the default greyscale gameboy colour palette.
-	PaletteGreyscale = byte(iota)
+	// PaletteGreyscale = byte(iota)
 	// PaletteOriginal is more authentic looking green tinted gameboy
 	// colour palette  as it would have been on the GameBoy
-	PaletteOriginal
+	// PaletteOriginal
+
 	// PaletteBGB used by default in the BGB emulator.
-	PaletteBGB
+	PaletteBGB = 2
 )
 
 const (
