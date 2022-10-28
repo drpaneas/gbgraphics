@@ -11,6 +11,7 @@ to create the canonical game asset and then export it as a PNG file.
 GBGraphics - extract graphics from Gameboy ROM using a screenshot
 git commit 6e5708bd3fe042b3f035d8182edbe1f7b61a8e14
 Usage: gbgraphics --img SCREENSHOT [--output FILE] ROM
+
 Positional arguments:
 ROM                    Path to the ROM file
 
