@@ -43,30 +43,29 @@ func (args) Version() string {
 
 var rangeStartOffset, rangeLength int32
 
+const (
+	width    = 8
+	bitDepth = 2
+)
+
 func main() {
-	var (
-		args           args
-		outputFilename string
-		path           string
-		screenshot     string
-		width          = 8
-		bitDepth       = 2
-	)
+	var userInput args
 
-	arg.MustParse(&args)
-	path = args.Rom
-	screenshot = args.Screenshot
+	arg.MustParse(&userInput)
 
-	romBytes, errReadFile := os.ReadFile(args.Rom)
+	outputFilename := userInput.Output
+	path := userInput.Rom
+	screenshot := userInput.Screenshot
+
+	romBytes, errReadFile := os.ReadFile(userInput.Rom)
 	if errReadFile != nil {
 		log.Fatal(errReadFile)
 	}
 
 	locations := getTiles(screenshot, romBytes)
 	for i, v := range locations {
-		outputFilename = args.Output
-		outputFilename = strings.ReplaceAll(outputFilename, ".png", "")
-		outputFilename = fmt.Sprintf("%s_%d.png", outputFilename, i)
+		withoutPng := strings.ReplaceAll(outputFilename, ".png", "")
+		newOutputFilename := fmt.Sprintf("%s_%d.png", withoutPng, i)
 
 		startOffsetString := v
 		// Remove the 0x prefix and keep only the actual number (as a string)
@@ -161,12 +160,12 @@ func main() {
 			}
 		}
 
-		if err := saveToDisk(outputFilename, img); err != nil {
+		if err := saveToDisk(newOutputFilename, img); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
-		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, outputFilename)
+		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, newOutputFilename)
 	}
 }
 
