@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"image"
 	"image/color"
+	"image/draw"
 	"image/png"
+	"io"
 	"log"
 	"math"
 	"os"
@@ -106,6 +109,461 @@ func main() {
 
 		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, newOutputFilename)
 	}
+
+	locations2 := getTiles2(screenshot, romBytes)
+
+	for i, v := range locations2 {
+		withoutPng := strings.ReplaceAll(outputFilename, ".png", "")
+		newOutputFilename := fmt.Sprintf("second_%s_%d.png", withoutPng, i)
+
+		rangeStartOffset = convertHexToInt32(v)
+
+		if rangeStartOffset < 0 {
+			fmt.Println("Invalid start offset specified!")
+			os.Exit(1)
+		}
+
+		tile := romBytes[rangeStartOffset : rangeStartOffset+rangeLength]
+
+		// Calculate the height of the img in bytes
+		height := 8 * int(math.Ceil(float64(len(tile))/float64(8*8*bitDepth)))
+		hexValue := fmt.Sprintf("% X", tile)
+		img := image.NewRGBA(image.Rect(0, 0, width, height))
+
+		for x := 0; x < width; x++ {
+			for y := 0; y < height; y++ {
+				img.Set(x, y, color.White)
+			}
+		}
+
+		xPos, yPos := 0, 0
+
+		// Modify the img
+		convert2BPPToPNG(height, tile, img, xPos, yPos)
+
+		if err := saveToDisk(newOutputFilename, img); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, newOutputFilename)
+	}
+
+	locations3 := getTiles3(screenshot, romBytes)
+
+	for i, v := range locations3 {
+		withoutPng := strings.ReplaceAll(outputFilename, ".png", "")
+		newOutputFilename := fmt.Sprintf("third_%s_%d.png", withoutPng, i)
+
+		rangeStartOffset = convertHexToInt32(v)
+
+		if rangeStartOffset < 0 {
+			fmt.Println("Invalid start offset specified!")
+			os.Exit(1)
+		}
+
+		tile := romBytes[rangeStartOffset : rangeStartOffset+rangeLength]
+
+		// Calculate the height of the img in bytes
+		height := 8 * int(math.Ceil(float64(len(tile))/float64(8*8*bitDepth)))
+		hexValue := fmt.Sprintf("% X", tile)
+		img := image.NewRGBA(image.Rect(0, 0, width, height))
+
+		for x := 0; x < width; x++ {
+			for y := 0; y < height; y++ {
+				img.Set(x, y, color.White)
+			}
+		}
+
+		xPos, yPos := 0, 0
+
+		// Modify the img
+		convert2BPPToPNG(height, tile, img, xPos, yPos)
+
+		if err := saveToDisk(newOutputFilename, img); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, newOutputFilename)
+	}
+
+	locations4 := getTiles4(screenshot, romBytes)
+
+	for i, v := range locations4 {
+		withoutPng := strings.ReplaceAll(outputFilename, ".png", "")
+		newOutputFilename := fmt.Sprintf("forth_%s_%d.png", withoutPng, i)
+
+		rangeStartOffset = convertHexToInt32(v)
+
+		if rangeStartOffset < 0 {
+			fmt.Println("Invalid start offset specified!")
+			os.Exit(1)
+		}
+
+		tile := romBytes[rangeStartOffset : rangeStartOffset+rangeLength]
+
+		// Calculate the height of the img in bytes
+		height := 8 * int(math.Ceil(float64(len(tile))/float64(8*8*bitDepth)))
+		hexValue := fmt.Sprintf("% X", tile)
+		img := image.NewRGBA(image.Rect(0, 0, width, height))
+
+		for x := 0; x < width; x++ {
+			for y := 0; y < height; y++ {
+				img.Set(x, y, color.White)
+			}
+		}
+
+		xPos, yPos := 0, 0
+
+		// Modify the img
+		convert2BPPToPNG(height, tile, img, xPos, yPos)
+
+		if err := saveToDisk(newOutputFilename, img); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, newOutputFilename)
+	}
+
+	locations5 := getTiles5(screenshot, romBytes)
+
+	for i, v := range locations5 {
+		withoutPng := strings.ReplaceAll(outputFilename, ".png", "")
+		newOutputFilename := fmt.Sprintf("fifth_%s_%d.png", withoutPng, i)
+
+		rangeStartOffset = convertHexToInt32(v)
+
+		if rangeStartOffset < 0 {
+			fmt.Println("Invalid start offset specified!")
+			os.Exit(1)
+		}
+
+		tile := romBytes[rangeStartOffset : rangeStartOffset+rangeLength]
+
+		// Calculate the height of the img in bytes
+		height := 8 * int(math.Ceil(float64(len(tile))/float64(8*8*bitDepth)))
+		hexValue := fmt.Sprintf("% X", tile)
+		img := image.NewRGBA(image.Rect(0, 0, width, height))
+
+		for x := 0; x < width; x++ {
+			for y := 0; y < height; y++ {
+				img.Set(x, y, color.White)
+			}
+		}
+
+		xPos, yPos := 0, 0
+
+		// Modify the img
+		convert2BPPToPNG(height, tile, img, xPos, yPos)
+
+		if err := saveToDisk(newOutputFilename, img); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, newOutputFilename)
+	}
+
+	locations6 := getTiles6(screenshot, romBytes)
+
+	for i, v := range locations6 {
+		withoutPng := strings.ReplaceAll(outputFilename, ".png", "")
+		newOutputFilename := fmt.Sprintf("sixth_%s_%d.png", withoutPng, i)
+
+		rangeStartOffset = convertHexToInt32(v)
+
+		if rangeStartOffset < 0 {
+			fmt.Println("Invalid start offset specified!")
+			os.Exit(1)
+		}
+
+		tile := romBytes[rangeStartOffset : rangeStartOffset+rangeLength]
+
+		// Calculate the height of the img in bytes
+		height := 8 * int(math.Ceil(float64(len(tile))/float64(8*8*bitDepth)))
+		hexValue := fmt.Sprintf("% X", tile)
+		img := image.NewRGBA(image.Rect(0, 0, width, height))
+
+		for x := 0; x < width; x++ {
+			for y := 0; y < height; y++ {
+				img.Set(x, y, color.White)
+			}
+		}
+
+		xPos, yPos := 0, 0
+
+		// Modify the img
+		convert2BPPToPNG(height, tile, img, xPos, yPos)
+
+		if err := saveToDisk(newOutputFilename, img); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, newOutputFilename)
+	}
+
+	locations7 := getTiles7(screenshot, romBytes)
+
+	for i, v := range locations7 {
+		withoutPng := strings.ReplaceAll(outputFilename, ".png", "")
+		newOutputFilename := fmt.Sprintf("seventh_%s_%d.png", withoutPng, i)
+
+		rangeStartOffset = convertHexToInt32(v)
+
+		if rangeStartOffset < 0 {
+			fmt.Println("Invalid start offset specified!")
+			os.Exit(1)
+		}
+
+		tile := romBytes[rangeStartOffset : rangeStartOffset+rangeLength]
+
+		// Calculate the height of the img in bytes
+		height := 8 * int(math.Ceil(float64(len(tile))/float64(8*8*bitDepth)))
+		hexValue := fmt.Sprintf("% X", tile)
+		img := image.NewRGBA(image.Rect(0, 0, width, height))
+
+		for x := 0; x < width; x++ {
+			for y := 0; y < height; y++ {
+				img.Set(x, y, color.White)
+			}
+		}
+
+		xPos, yPos := 0, 0
+
+		// Modify the img
+		convert2BPPToPNG(height, tile, img, xPos, yPos)
+
+		if err := saveToDisk(newOutputFilename, img); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, newOutputFilename)
+	}
+
+	locations8 := getTiles8(screenshot, romBytes)
+
+	for i, v := range locations8 {
+		withoutPng := strings.ReplaceAll(outputFilename, ".png", "")
+		newOutputFilename := fmt.Sprintf("eighth_%s_%d.png", withoutPng, i)
+
+		rangeStartOffset = convertHexToInt32(v)
+
+		if rangeStartOffset < 0 {
+			fmt.Println("Invalid start offset specified!")
+			os.Exit(1)
+		}
+
+		tile := romBytes[rangeStartOffset : rangeStartOffset+rangeLength]
+
+		// Calculate the height of the img in bytes
+		height := 8 * int(math.Ceil(float64(len(tile))/float64(8*8*bitDepth)))
+		hexValue := fmt.Sprintf("% X", tile)
+		img := image.NewRGBA(image.Rect(0, 0, width, height))
+
+		for x := 0; x < width; x++ {
+			for y := 0; y < height; y++ {
+				img.Set(x, y, color.White)
+			}
+		}
+
+		xPos, yPos := 0, 0
+
+		// Modify the img
+		convert2BPPToPNG(height, tile, img, xPos, yPos)
+
+		if err := saveToDisk(newOutputFilename, img); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("'%s' (Found at location %s) converted to '%s'\n", hexValue, v, newOutputFilename)
+	}
+
+	// Compare all the images of the disk that start with:
+	// 'out_*.png' and 'second_out_*.png' and third_out_*.png and forth_out_*.png and fifth_out_*.png and sixth_out_*.png and seventh_out_*.png and eighth_out_*.png
+	// and delete the duplicates
+
+	// Get all the files in the current directory
+	files, err := os.ReadDir(".")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create a slice of all the filenames
+	var filenames []string
+	for _, file := range files {
+		filenames = append(filenames, file.Name())
+	}
+
+	// move all the files that start with 'out_' to a new slice
+	var outFiles []string
+	for _, file := range filenames {
+
+		if strings.HasPrefix(file, "out_") {
+			outFiles = append(outFiles, file)
+		}
+	}
+
+	// move all the files that start with 'second_out_' to a new slice
+	var secondOutFiles []string
+	for _, file := range filenames {
+
+		if strings.HasPrefix(file, "second_out_") {
+			secondOutFiles = append(secondOutFiles, file)
+		}
+	}
+
+	// move all the files that start with 'third_out_' to a new slice
+	var thirdOutFiles []string
+	for _, file := range filenames {
+
+		if strings.HasPrefix(file, "third_out_") {
+			thirdOutFiles = append(thirdOutFiles, file)
+		}
+	}
+
+	// move all the files that start with 'forth_out_' to a new slice
+	var forthOutFiles []string
+	for _, file := range filenames {
+
+		if strings.HasPrefix(file, "forth_out_") {
+			forthOutFiles = append(forthOutFiles, file)
+		}
+	}
+
+	// move all the files that start with 'fifth_out_' to a new slice
+	var fifthOutFiles []string
+	for _, file := range filenames {
+
+		if strings.HasPrefix(file, "fifth_out_") {
+			fifthOutFiles = append(fifthOutFiles, file)
+		}
+	}
+
+	// move all the files that start with 'sixth_out_' to a new slice
+	var sixthOutFiles []string
+	for _, file := range filenames {
+
+		if strings.HasPrefix(file, "sixth_out_") {
+			sixthOutFiles = append(sixthOutFiles, file)
+		}
+	}
+
+	// move all the files that start with 'seventh_out_' to a new slice
+	var seventhOutFiles []string
+	for _, file := range filenames {
+
+		if strings.HasPrefix(file, "seventh_out_") {
+			seventhOutFiles = append(seventhOutFiles, file)
+		}
+	}
+
+	// move all the files that start with 'eighth_out_' to a new slice
+	var eighthOutFiles []string
+	for _, file := range filenames {
+
+		if strings.HasPrefix(file, "eighth_out_") {
+			eighthOutFiles = append(eighthOutFiles, file)
+		}
+	}
+
+	// Create one slice with all the elements from all of the slices
+	var allFiles []string
+	allFiles = append(allFiles, outFiles...)
+	allFiles = append(allFiles, secondOutFiles...)
+	allFiles = append(allFiles, thirdOutFiles...)
+	allFiles = append(allFiles, forthOutFiles...)
+	allFiles = append(allFiles, fifthOutFiles...)
+	allFiles = append(allFiles, sixthOutFiles...)
+	allFiles = append(allFiles, seventhOutFiles...)
+	allFiles = append(allFiles, eighthOutFiles...)
+
+	// Create a folder 'final' if it doesn't exist
+	// if it exists, delete it and create it again
+	if _, err := os.Stat("final"); os.IsNotExist(err) {
+		os.Mkdir("final", 0755)
+	} else {
+		os.RemoveAll("final")
+		os.Mkdir("final", 0755)
+	}
+
+	// Move all the files to the 'final' folder
+	for _, file := range allFiles {
+		// Copy the file to the 'final' folder
+		copyFile(file, "final/"+file)
+
+		// Remove the file from the current directory
+		os.Remove(file)
+	}
+
+	// Compare all the files in the 'final' folder and delete the duplicates
+	// Get all the files in the current directory
+	files, err = os.ReadDir("final")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// create a slice for duplicate files
+	var duplicateFiles []string
+
+	// Compare all 'files' with each other (binary comparison) and delete the duplicates
+	for _, file := range files {
+		for _, file2 := range files {
+			if file.Name() != file2.Name() {
+				if compareFiles("final/"+file.Name(), "final/"+file2.Name()) {
+					// Add the file to the slice of duplicate files
+					duplicateFiles = append(duplicateFiles, file2.Name())
+				}
+			}
+		}
+	}
+
+	// Delete all the files in the 'duplicateFiles' slice
+	for _, file := range duplicateFiles {
+		_ = os.Remove("final/" + file)
+	}
+}
+
+func compareFiles(file1, file2 string) bool {
+	f1, err := os.ReadFile(file1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	f2, err := os.ReadFile(file2)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return bytes.Equal(f1, f2)
+}
+
+func copyFile(src, dst string) error {
+
+	sourceFileStat, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+
+	if !sourceFileStat.Mode().IsRegular() {
+		return fmt.Errorf("%s is not a regular file", src)
+	}
+
+	source, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer source.Close()
+
+	destination, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destination.Close()
+	_, err = io.Copy(destination, source)
+	return err
 }
 
 func convert2BPPToPNG(height int, tile []byte, img *image.RGBA, xPos int, yPos int) {
@@ -246,15 +704,658 @@ func removeDuplicateByte(byteSlice [][]byte) [][]byte {
 	return list
 }
 
+func getTiles2(screenshot string, romBytes []byte) []string {
+	// Step 1: Load the screenshot from the disk
+	img := readImageFromFilePath(screenshot)
+
+	// Print the dimensions of the image
+	fmt.Println("Image dimensions:", img.Bounds().Max.X, img.Bounds().Max.Y)
+
+	// Step 2: Create a new image with the same dimensions as the original image
+	// but without the first column
+	newImg := image.NewRGBA(image.Rect(0, 0, img.Bounds().Max.X-1, img.Bounds().Max.Y))
+
+	// Step 3: Copy the pixels from the original image to the new image
+	for y := 0; y < img.Bounds().Max.Y; y++ {
+		for x := 1; x < img.Bounds().Max.X; x++ {
+			newImg.Set(x-1, y, img.At(x, y))
+		}
+	}
+
+	// Print the dimensions of the new image
+	fmt.Println("New image dimensions:", newImg.Bounds().Max.X, newImg.Bounds().Max.Y)
+
+	// Step 4: Save the new image to disk
+	saveToDisk("newImg2.png", newImg)
+
+	// ---------------------------------------------
+
+	// Step 1: Split the image into 7x8 tiles (7x8 because we removed the first column)
+	tiles := split7x8(newImg)
+
+	// Step 2: Print the number of tiles
+	fmt.Println("Number of tiles new image:", len(tiles))
+
+	// Step 3: Create a new image from the tiles
+	tiledImage := createImageFromTiles(tiles, 19, 18)
+
+	// Step 4: Save the tiled image to disk
+	saveToDisk("tiledImage2.png", tiledImage)
+
+	// Step 5: Save unique tiles to disk and the final image
+	uniqueTiles, err := saveUniqueTiles(tiles, 19, 18, "2")
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+
+	// Step 6: Create TiledArray
+	tiledArray := createTiledArray(tiles, uniqueTiles)
+
+	// Step 7: Print the tiledArray to the console in readable format, like 19x18
+	for i, v := range tiledArray {
+		if i%19 == 0 {
+			fmt.Println()
+		}
+		fmt.Printf("%02d ", v)
+	}
+	fmt.Println()
+
+	// Step 8: Change this line later
+	tiles = uniqueTiles
+
+	// Step 9: These tiles are in RGBA format, so we need to convert them to 2BPP
+	// before we can compare them to the original gameboy tileset
+	origCodeTiles := getHexCodes(tiles)
+	uniqCodeTiles := removeDuplicateByte(origCodeTiles)
+
+	var addr []string
+
+	// Step 10: Search for each tile in the screenshot
+	for i, tile := range uniqCodeTiles {
+		// Search for the tile in the rom
+		for j := 0; j < len(romBytes); j++ {
+			if j+16 > len(romBytes) { // check for out-of-bounds
+				break
+			}
+
+			if compare(tile, romBytes[j:j+16]) {
+				tmp := fmt.Sprintf("0x%X", j)
+				addr = append(addr, tmp)
+				_ = i
+
+				break // no reason to keep searching for this tile if you have already found it
+			}
+		}
+	}
+
+	return addr
+}
+
+func getTiles3(screenshot string, romBytes []byte) []string {
+	// Step 1: Load the screenshot from the disk
+	img := readImageFromFilePath(screenshot)
+
+	// Print the dimensions of the image
+	fmt.Println("Image dimensions:", img.Bounds().Max.X, img.Bounds().Max.Y)
+
+	// Step 2: Create a new image with the same dimensions as the original image
+	// but without the first 2 columns
+	newImg := image.NewRGBA(image.Rect(0, 0, img.Bounds().Max.X-2, img.Bounds().Max.Y))
+
+	// Step 3: Copy the pixels from the original image to the new image (x-2)
+	for y := 0; y < img.Bounds().Max.Y; y++ {
+		for x := 2; x < img.Bounds().Max.X; x++ {
+			newImg.Set(x-2, y, img.At(x, y))
+		}
+	}
+
+	// Print the dimensions of the new image
+	fmt.Println("New image dimensions:", newImg.Bounds().Max.X, newImg.Bounds().Max.Y)
+
+	// Step 4: Save the new image to disk
+	saveToDisk("new3Img.png", newImg)
+
+	// ---------------------------------------------
+
+	// Step 1: Split the image into 7x8 tiles (7x8 because we removed the first column)
+	tiles := split7x8(newImg)
+
+	// Step 2: Print the number of tiles
+	fmt.Println("Number of tiles new image:", len(tiles))
+
+	// Step 3: Create a new image from the tiles
+	tiledImage := createImageFromTiles(tiles, 19, 18)
+
+	// Step 4: Save the tiled image to disk
+	saveToDisk("tiledImage3.png", tiledImage)
+
+	// Step 5: Save unique tiles to disk and the final image
+	uniqueTiles, err := saveUniqueTiles(tiles, 19, 18, "3")
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+
+	// Step 6: Create TiledArray
+	tiledArray := createTiledArray(tiles, uniqueTiles)
+
+	// Step 7: Print the tiledArray to the console in readable format, like 19x18
+	for i, v := range tiledArray {
+		if i%19 == 0 {
+			fmt.Println()
+		}
+		fmt.Printf("%02d ", v)
+	}
+	fmt.Println()
+
+	// Step 8: Change this line later
+	tiles = uniqueTiles
+
+	// Step 9: These tiles are in RGBA format, so we need to convert them to 2BPP
+	// before we can compare them to the original gameboy tileset
+	origCodeTiles := getHexCodes(tiles)
+	uniqCodeTiles := removeDuplicateByte(origCodeTiles)
+
+	var addr []string
+
+	// Step 10: Search for each tile in the screenshot
+	for i, tile := range uniqCodeTiles {
+		// Search for the tile in the rom
+		for j := 0; j < len(romBytes); j++ {
+			if j+16 > len(romBytes) { // check for out-of-bounds
+				break
+			}
+
+			if compare(tile, romBytes[j:j+16]) {
+				tmp := fmt.Sprintf("0x%X", j)
+				addr = append(addr, tmp)
+				_ = i
+
+				break // no reason to keep searching for this tile if you have already found it
+			}
+		}
+	}
+
+	return addr
+}
+
+func getTiles4(screenshot string, romBytes []byte) []string {
+	// Step 1: Load the screenshot from the disk
+	img := readImageFromFilePath(screenshot)
+
+	// Print the dimensions of the image
+	fmt.Println("Image dimensions:", img.Bounds().Max.X, img.Bounds().Max.Y)
+
+	// Step 2: Create a new image with the same dimensions as the original image
+	// but without the first 3 columns
+	newImg := image.NewRGBA(image.Rect(0, 0, img.Bounds().Max.X-3, img.Bounds().Max.Y))
+
+	// Step 3: Copy the pixels from the original image to the new image
+	for y := 0; y < img.Bounds().Max.Y; y++ {
+		for x := 3; x < img.Bounds().Max.X; x++ {
+			newImg.Set(x-3, y, img.At(x, y))
+		}
+	}
+
+	// Print the dimensions of the new image
+	fmt.Println("New image dimensions:", newImg.Bounds().Max.X, newImg.Bounds().Max.Y)
+
+	// Step 4: Save the new image to disk
+	saveToDisk("new4Img.png", newImg)
+
+	// ---------------------------------------------
+
+	// Step 1: Split the image into 7x8 tiles (7x8 because we removed the first column)
+	tiles := split7x8(newImg)
+
+	// Step 2: Print the number of tiles
+	fmt.Println("Number of tiles new image:", len(tiles))
+
+	// Step 3: Create a new image from the tiles
+	tiledImage := createImageFromTiles(tiles, 19, 18)
+
+	// Step 4: Save the tiled image to disk
+	saveToDisk("tiledImage4.png", tiledImage)
+
+	// Step 5: Save unique tiles to disk and the final image
+	uniqueTiles, err := saveUniqueTiles(tiles, 19, 18, "4")
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+
+	// Step 6: Create TiledArray
+	tiledArray := createTiledArray(tiles, uniqueTiles)
+
+	// Step 7: Print the tiledArray to the console in readable format, like 19x18
+	for i, v := range tiledArray {
+		if i%19 == 0 {
+			fmt.Println()
+		}
+		fmt.Printf("%02d ", v)
+	}
+	fmt.Println()
+
+	// Step 8: Change this line later
+	tiles = uniqueTiles
+
+	// Step 9: These tiles are in RGBA format, so we need to convert them to 2BPP
+	// before we can compare them to the original gameboy tileset
+	origCodeTiles := getHexCodes(tiles)
+	uniqCodeTiles := removeDuplicateByte(origCodeTiles)
+
+	var addr []string
+
+	// Step 10: Search for each tile in the screenshot
+	for i, tile := range uniqCodeTiles {
+		// Search for the tile in the rom
+		for j := 0; j < len(romBytes); j++ {
+			if j+16 > len(romBytes) { // check for out-of-bounds
+				break
+			}
+
+			if compare(tile, romBytes[j:j+16]) {
+				tmp := fmt.Sprintf("0x%X", j)
+				addr = append(addr, tmp)
+				_ = i
+
+				break // no reason to keep searching for this tile if you have already found it
+			}
+		}
+	}
+
+	return addr
+}
+
+func getTiles5(screenshot string, romBytes []byte) []string {
+	// Step 1: Load the screenshot from the disk
+	img := readImageFromFilePath(screenshot)
+
+	// Print the dimensions of the image
+	fmt.Println("Image dimensions:", img.Bounds().Max.X, img.Bounds().Max.Y)
+
+	// Step 2: Create a new image with the same dimensions as the original image
+	// but without the first 3 columns
+	newImg := image.NewRGBA(image.Rect(0, 0, img.Bounds().Max.X-4, img.Bounds().Max.Y))
+
+	// Step 3: Copy the pixels from the original image to the new image
+	for y := 0; y < img.Bounds().Max.Y; y++ {
+		for x := 4; x < img.Bounds().Max.X; x++ {
+			newImg.Set(x-4, y, img.At(x, y))
+		}
+	}
+
+	// Print the dimensions of the new image
+	fmt.Println("New image dimensions:", newImg.Bounds().Max.X, newImg.Bounds().Max.Y)
+
+	// Step 4: Save the new image to disk
+	saveToDisk("new5Img.png", newImg)
+
+	// ---------------------------------------------
+
+	// Step 1: Split the image into 7x8 tiles (7x8 because we removed the first column)
+	tiles := split7x8(newImg)
+
+	// Step 2: Print the number of tiles
+	fmt.Println("Number of tiles new image:", len(tiles))
+
+	// Step 3: Create a new image from the tiles
+	tiledImage := createImageFromTiles(tiles, 19, 18)
+
+	// Step 4: Save the tiled image to disk
+	saveToDisk("tiledImage5.png", tiledImage)
+
+	// Step 5: Save unique tiles to disk and the final image
+	uniqueTiles, err := saveUniqueTiles(tiles, 19, 18, "5")
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+
+	// Step 6: Create TiledArray
+	tiledArray := createTiledArray(tiles, uniqueTiles)
+
+	// Step 7: Print the tiledArray to the console in readable format, like 19x18
+	for i, v := range tiledArray {
+		if i%19 == 0 {
+			fmt.Println()
+		}
+		fmt.Printf("%02d ", v)
+	}
+	fmt.Println()
+
+	// Step 8: Change this line later
+	tiles = uniqueTiles
+
+	// Step 9: These tiles are in RGBA format, so we need to convert them to 2BPP
+	// before we can compare them to the original gameboy tileset
+	origCodeTiles := getHexCodes(tiles)
+	uniqCodeTiles := removeDuplicateByte(origCodeTiles)
+
+	var addr []string
+
+	// Step 10: Search for each tile in the screenshot
+	for i, tile := range uniqCodeTiles {
+		// Search for the tile in the rom
+		for j := 0; j < len(romBytes); j++ {
+			if j+16 > len(romBytes) { // check for out-of-bounds
+				break
+			}
+
+			if compare(tile, romBytes[j:j+16]) {
+				tmp := fmt.Sprintf("0x%X", j)
+				addr = append(addr, tmp)
+				_ = i
+
+				break // no reason to keep searching for this tile if you have already found it
+			}
+		}
+	}
+
+	return addr
+}
+
+func getTiles6(screenshot string, romBytes []byte) []string {
+	// Step 1: Load the screenshot from the disk
+	img := readImageFromFilePath(screenshot)
+
+	// Print the dimensions of the image
+	fmt.Println("Image dimensions:", img.Bounds().Max.X, img.Bounds().Max.Y)
+
+	// Step 2: Create a new image with the same dimensions as the original image
+	// but without the first 3 columns
+	newImg := image.NewRGBA(image.Rect(0, 0, img.Bounds().Max.X-5, img.Bounds().Max.Y))
+
+	// Step 3: Copy the pixels from the original image to the new image
+	for y := 0; y < img.Bounds().Max.Y; y++ {
+		for x := 5; x < img.Bounds().Max.X; x++ {
+			newImg.Set(x-5, y, img.At(x, y))
+		}
+	}
+
+	// Print the dimensions of the new image
+	fmt.Println("New image dimensions:", newImg.Bounds().Max.X, newImg.Bounds().Max.Y)
+
+	// Step 4: Save the new image to disk
+	saveToDisk("new6Img.png", newImg)
+
+	// ---------------------------------------------
+
+	// Step 1: Split the image into 7x8 tiles (7x8 because we removed the first column)
+	tiles := split7x8(newImg)
+
+	// Step 2: Print the number of tiles
+	fmt.Println("Number of tiles new image:", len(tiles))
+
+	// Step 3: Create a new image from the tiles
+	tiledImage := createImageFromTiles(tiles, 19, 18)
+
+	// Step 4: Save the tiled image to disk
+	saveToDisk("tiledImage6.png", tiledImage)
+
+	// Step 5: Save unique tiles to disk and the final image
+	uniqueTiles, err := saveUniqueTiles(tiles, 19, 18, "6")
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+
+	// Step 6: Create TiledArray
+	tiledArray := createTiledArray(tiles, uniqueTiles)
+
+	// Step 7: Print the tiledArray to the console in readable format, like 19x18
+	for i, v := range tiledArray {
+		if i%19 == 0 {
+			fmt.Println()
+		}
+		fmt.Printf("%02d ", v)
+	}
+	fmt.Println()
+
+	// Step 8: Change this line later
+	tiles = uniqueTiles
+
+	// Step 9: These tiles are in RGBA format, so we need to convert them to 2BPP
+	// before we can compare them to the original gameboy tileset
+	origCodeTiles := getHexCodes(tiles)
+	uniqCodeTiles := removeDuplicateByte(origCodeTiles)
+
+	var addr []string
+
+	// Step 10: Search for each tile in the screenshot
+	for i, tile := range uniqCodeTiles {
+		// Search for the tile in the rom
+		for j := 0; j < len(romBytes); j++ {
+			if j+16 > len(romBytes) { // check for out-of-bounds
+				break
+			}
+
+			if compare(tile, romBytes[j:j+16]) {
+				tmp := fmt.Sprintf("0x%X", j)
+				addr = append(addr, tmp)
+				_ = i
+
+				break // no reason to keep searching for this tile if you have already found it
+			}
+		}
+	}
+
+	return addr
+}
+
+func getTiles7(screenshot string, romBytes []byte) []string {
+	// Step 1: Load the screenshot from the disk
+	img := readImageFromFilePath(screenshot)
+
+	// Print the dimensions of the image
+	fmt.Println("Image dimensions:", img.Bounds().Max.X, img.Bounds().Max.Y)
+
+	// Step 2: Create a new image with the same dimensions as the original image
+	// but without the first 3 columns
+	newImg := image.NewRGBA(image.Rect(0, 0, img.Bounds().Max.X-6, img.Bounds().Max.Y))
+
+	// Step 3: Copy the pixels from the original image to the new image
+	for y := 0; y < img.Bounds().Max.Y; y++ {
+		for x := 6; x < img.Bounds().Max.X; x++ {
+			newImg.Set(x-6, y, img.At(x, y))
+		}
+	}
+
+	// Print the dimensions of the new image
+	fmt.Println("New image dimensions:", newImg.Bounds().Max.X, newImg.Bounds().Max.Y)
+
+	// Step 4: Save the new image to disk
+	saveToDisk("new7Img.png", newImg)
+
+	// ---------------------------------------------
+
+	// Step 1: Split the image into 7x8 tiles (7x8 because we removed the first column)
+	tiles := split7x8(newImg)
+
+	// Step 2: Print the number of tiles
+	fmt.Println("Number of tiles new image:", len(tiles))
+
+	// Step 3: Create a new image from the tiles
+	tiledImage := createImageFromTiles(tiles, 19, 18)
+
+	// Step 4: Save the tiled image to disk
+	saveToDisk("tiledImage7.png", tiledImage)
+
+	// Step 5: Save unique tiles to disk and the final image
+	uniqueTiles, err := saveUniqueTiles(tiles, 19, 18, "7")
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+
+	// Step 6: Create TiledArray
+	tiledArray := createTiledArray(tiles, uniqueTiles)
+
+	// Step 7: Print the tiledArray to the console in readable format, like 19x18
+	for i, v := range tiledArray {
+		if i%19 == 0 {
+			fmt.Println()
+		}
+		fmt.Printf("%02d ", v)
+	}
+	fmt.Println()
+
+	// Step 8: Change this line later
+	tiles = uniqueTiles
+
+	// Step 9: These tiles are in RGBA format, so we need to convert them to 2BPP
+	// before we can compare them to the original gameboy tileset
+	origCodeTiles := getHexCodes(tiles)
+	uniqCodeTiles := removeDuplicateByte(origCodeTiles)
+
+	var addr []string
+
+	// Step 10: Search for each tile in the screenshot
+	for i, tile := range uniqCodeTiles {
+		// Search for the tile in the rom
+		for j := 0; j < len(romBytes); j++ {
+			if j+16 > len(romBytes) { // check for out-of-bounds
+				break
+			}
+
+			if compare(tile, romBytes[j:j+16]) {
+				tmp := fmt.Sprintf("0x%X", j)
+				addr = append(addr, tmp)
+				_ = i
+
+				break // no reason to keep searching for this tile if you have already found it
+			}
+		}
+	}
+
+	return addr
+}
+
+func getTiles8(screenshot string, romBytes []byte) []string {
+	// Step 1: Load the screenshot from the disk
+	img := readImageFromFilePath(screenshot)
+
+	// Print the dimensions of the image
+	fmt.Println("Image dimensions:", img.Bounds().Max.X, img.Bounds().Max.Y)
+
+	// Step 2: Create a new image with the same dimensions as the original image
+	// but without the first 3 columns
+	newImg := image.NewRGBA(image.Rect(0, 0, img.Bounds().Max.X-7, img.Bounds().Max.Y))
+
+	// Step 3: Copy the pixels from the original image to the new image
+	for y := 0; y < img.Bounds().Max.Y; y++ {
+		for x := 7; x < img.Bounds().Max.X; x++ {
+			newImg.Set(x-7, y, img.At(x, y))
+		}
+	}
+
+	// Print the dimensions of the new image
+	fmt.Println("New image dimensions:", newImg.Bounds().Max.X, newImg.Bounds().Max.Y)
+
+	// Step 4: Save the new image to disk
+	saveToDisk("new8Img.png", newImg)
+
+	// ---------------------------------------------
+
+	// Step 1: Split the image into 7x8 tiles (7x8 because we removed the first column)
+	tiles := split7x8(newImg)
+
+	// Step 2: Print the number of tiles
+	fmt.Println("Number of tiles new image:", len(tiles))
+
+	// Step 3: Create a new image from the tiles
+	tiledImage := createImageFromTiles(tiles, 19, 18)
+
+	// Step 4: Save the tiled image to disk
+	saveToDisk("tiledImage8.png", tiledImage)
+
+	// Step 5: Save unique tiles to disk and the final image
+	uniqueTiles, err := saveUniqueTiles(tiles, 19, 18, "8")
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+
+	// Step 6: Create TiledArray
+	tiledArray := createTiledArray(tiles, uniqueTiles)
+
+	// Step 7: Print the tiledArray to the console in readable format, like 19x18
+	for i, v := range tiledArray {
+		if i%19 == 0 {
+			fmt.Println()
+		}
+		fmt.Printf("%02d ", v)
+	}
+	fmt.Println()
+
+	// Step 8: Change this line later
+	tiles = uniqueTiles
+
+	// Step 9: These tiles are in RGBA format, so we need to convert them to 2BPP
+	// before we can compare them to the original gameboy tileset
+	origCodeTiles := getHexCodes(tiles)
+	uniqCodeTiles := removeDuplicateByte(origCodeTiles)
+
+	var addr []string
+
+	// Step 10: Search for each tile in the screenshot
+	for i, tile := range uniqCodeTiles {
+		// Search for the tile in the rom
+		for j := 0; j < len(romBytes); j++ {
+			if j+16 > len(romBytes) { // check for out-of-bounds
+				break
+			}
+
+			if compare(tile, romBytes[j:j+16]) {
+				tmp := fmt.Sprintf("0x%X", j)
+				addr = append(addr, tmp)
+				_ = i
+
+				break // no reason to keep searching for this tile if you have already found it
+			}
+		}
+	}
+
+	return addr
+}
+
 func getTiles(screenshot string, romBytes []byte) []string {
 	// Load a screenshot from the emulator and split it into 8x8 tiles
 	img := readImageFromFilePath(screenshot)
 	tiles := split8x8(img)
 
-	if len(tiles) != 23040/64 {
-		fmt.Println("Not 23040/64 tiles")
+	if len(tiles) != 23040/64 { // 23040 is the number of pixels in the screenshot (e.g. 160x144)
+		fmt.Println("Not 23040/64 tiles") // 64 is the number of pixels in a 8x8 tile, 8*8=64
+		os.Exit(1)                        // so we expect 360 tiles
+	}
+
+	tiledImage := createImageFromTiles(tiles, 20, 18)
+
+	// Save the tiled image to disk with "tiledImage.png"
+	saveToDisk("tiledImage.png", tiledImage)
+
+	// Save unique tiles to disk and the final image
+	uniqueTiles, err := saveUniqueTiles(tiles, 20, 18, "1")
+	if err != nil {
+		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
+
+	// Create TiledArray
+	tiledArray := createTiledArray(tiles, uniqueTiles)
+
+	// Print the tiledArray to the console in readable format, like 20x18
+	for i, v := range tiledArray {
+		if i%20 == 0 {
+			fmt.Println()
+		}
+		fmt.Printf("%02d ", v)
+	}
+	fmt.Println()
+
+	// Change this line later
+	tiles = uniqueTiles
 
 	// These tiles are in RGBA format, so we need to convert them to 2BPP
 	// before we can compare them to the original gameboy tileset
@@ -282,6 +1383,25 @@ func getTiles(screenshot string, romBytes []byte) []string {
 	}
 
 	return addr
+}
+
+// createTiledArray For every tile, create an array with the size of the tiledImage
+// and fill it with the tile index if the tile is found in the tiledImage
+func createTiledArray(allTiles []image.Image, uniqueTiles []image.Image) []int {
+
+	// Create an array if integers with the size of the tiledImageTiles
+	tiledArray := make([]int, len(allTiles))
+
+	for i, tile := range uniqueTiles {
+		for j, imageTile := range allTiles {
+			if areImagesEquivalent(tile, imageTile) {
+				tiledArray[j] = i
+			}
+		}
+	}
+
+	return tiledArray
+
 }
 
 func getHexCodes(tiles []image.Image) [][]byte {
@@ -465,4 +1585,192 @@ func split8x8(src image.Image) []image.Image {
 	}
 
 	return tiles
+}
+
+func split7x8(src image.Image) []image.Image {
+	// // Check if image resolution is 159x144
+	// if src.Bounds().Max.X != 159 && src.Bounds().Max.X != 158 || src.Bounds().Max.Y != 144 {
+	// 	fmt.Println("Not 159x144 or not 158x144")
+	// 	fmt.Println("Error: It is: ", src.Bounds().Max.X, src.Bounds().Max.Y)
+	// 	os.Exit(1)
+	// }
+
+	checkColor(src)
+
+	// Iterate over the image pixels and split it into 7x8 sub-images
+	var tiles []image.Image
+
+	// Skip the last tile of every row
+	for y := 0; y < src.Bounds().Max.Y; y += 8 {
+		for x := 0; x < src.Bounds().Max.X-8; x += 8 {
+			tile := image.NewRGBA(image.Rect(0, 0, 8, 8))
+
+			for i := 0; i < 8; i++ {
+				for j := 0; j < 8; j++ {
+					tile.Set(i, j, src.At(x+i, y+j))
+				}
+			}
+
+			tiles = append(tiles, tile)
+		}
+	}
+
+	return tiles
+}
+
+func areImagesEqual(img1, img2 image.Image) bool {
+	bounds1 := img1.Bounds()
+	bounds2 := img2.Bounds()
+
+	if bounds1.Dx() != bounds2.Dx() || bounds1.Dy() != bounds2.Dy() {
+		return false
+	}
+
+	for y := bounds1.Min.Y; y < bounds1.Max.Y; y++ {
+		for x := bounds1.Min.X; x < bounds1.Max.X; x++ {
+			if img1.At(x, y) != img2.At(x, y) {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+func flipImageHorizontally(img image.Image) image.Image {
+	bounds := img.Bounds()
+	flipped := image.NewRGBA(bounds)
+
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
+			flipped.Set(bounds.Max.X-1-x, y, img.At(x, y))
+		}
+	}
+
+	return flipped
+}
+
+func flipImageVertically(img image.Image) image.Image {
+	bounds := img.Bounds()
+	flipped := image.NewRGBA(bounds)
+
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
+			flipped.Set(x, bounds.Max.Y-1-y, img.At(x, y))
+		}
+	}
+
+	return flipped
+}
+
+func areImagesEquivalent(img1, img2 image.Image) bool {
+	if areImagesEqual(img1, img2) {
+		return true
+	}
+
+	flippedHorizontally := flipImageHorizontally(img1)
+	if areImagesEqual(flippedHorizontally, img2) {
+		return true
+	}
+
+	flippedVertically := flipImageVertically(img1)
+	if areImagesEqual(flippedVertically, img2) {
+		return true
+	}
+
+	flippedBoth := flipImageVertically(flippedHorizontally)
+	return areImagesEqual(flippedBoth, img2)
+}
+
+func createImageFromTiles(tiles []image.Image, tilesPerRow, numRows int) image.Image {
+
+	tileWidth, tileHeight := tiles[0].Bounds().Dx(), tiles[0].Bounds().Dy()
+	imgWidth, imgHeight := tilesPerRow*(tileWidth+2), numRows*(tileHeight+2)
+
+	output := image.NewRGBA(image.Rect(0, 0, imgWidth, imgHeight))
+
+	// Assign a unique color for each unique tile
+	colors := make([]color.Color, len(tiles))
+	for i := range tiles {
+		colors[i] = color.RGBA{uint8(i * 29 % 256), uint8(i * 73 % 256), uint8(i * 151 % 256), 255}
+
+		for j := 0; j < i; j++ {
+			if areImagesEquivalent(tiles[i], tiles[j]) {
+				colors[i] = colors[j]
+				break
+			}
+		}
+	}
+
+	for i, tile := range tiles {
+		if i >= tilesPerRow*numRows {
+			log.Println("Warning: More tiles provided than space in the output image.")
+			break
+		}
+
+		x := (i % tilesPerRow) * (tileWidth + 2)
+		y := (i / tilesPerRow) * (tileHeight + 2)
+
+		r := image.Rect(x+1, y+1, x+1+tileWidth, y+1+tileHeight)
+		draw.Draw(output, r, tile, image.Point{}, draw.Src)
+
+		// Draw the perimeter with the assigned color
+		perimeterColor := colors[i]
+		for px := x; px <= x+tileWidth+1; px++ {
+			output.Set(px, y, perimeterColor)              // Top border
+			output.Set(px, y+tileHeight+1, perimeterColor) // Bottom border
+		}
+		for py := y; py <= y+tileHeight+1; py++ {
+			output.Set(x, py, perimeterColor)             // Left border
+			output.Set(x+tileWidth+1, py, perimeterColor) // Right border
+		}
+	}
+
+	return output
+}
+
+func saveUniqueTiles(tiles []image.Image, tilesPerRow int, numRows int, filename string) ([]image.Image, error) {
+	uniqueTiles := []image.Image{}
+
+	for _, tile := range tiles {
+		isUnique := true
+		for j := 0; j < len(uniqueTiles); j++ {
+			if areImagesEquivalent(tile, uniqueTiles[j]) {
+				isUnique = false
+				break
+			}
+		}
+
+		if isUnique {
+			uniqueTiles = append(uniqueTiles, tile)
+		}
+	}
+
+	// Save unique tiles to individual files
+	for i, tile := range uniqueTiles {
+		filename := fmt.Sprintf("tile%d.png", i)
+		file, err := os.Create(filename)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create file %s: %w", filename, err)
+		}
+		defer file.Close()
+
+		if err := png.Encode(file, tile); err != nil {
+			return nil, fmt.Errorf("failed to save tile %s: %w", filename, err)
+		}
+	}
+
+	// Save the final image with unique tiles
+	uniqueTilesImage := createImageFromTiles(uniqueTiles, tilesPerRow, numRows)
+	file, err := os.Create(fmt.Sprintf("unique_tiles-%s.png", filename))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create file unique_tiles.png: %w", err)
+	}
+	defer file.Close()
+
+	if err := png.Encode(file, uniqueTilesImage); err != nil {
+		return nil, fmt.Errorf("failed to save unique_tiles.png: %w", err)
+	}
+
+	return uniqueTiles, nil
 }
